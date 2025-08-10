@@ -1,3 +1,7 @@
+from .db import db, environment, SCHEMA, add_prefix_for_prod
+from sqlalchemy import JSON
+from datetime import datetime
+
 class Favourite(db.Model):
     __tablename__ = 'favourites'
 
