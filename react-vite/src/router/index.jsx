@@ -3,6 +3,10 @@ import LoginFormPage from '../components/LoginFormPage';
 import SignupFormPage from '../components/SignupFormPage';
 import Layout from './Layout';
 
+// new components
+import RecipeDetail from '../components/RecipeDetail';
+import GroceryListPage from '../components/GroceryListPage';
+
 export const router = createBrowserRouter([
   {
     element: <Layout />,
@@ -18,6 +22,14 @@ export const router = createBrowserRouter([
       {
         path: "signup",
         element: <SignupFormPage />,
+      },
+      {
+        path: "recipes/:recipeId",  
+        element: <RecipeDetail />,
+      },
+      {
+        path: "grocery-list",  
+        element: <GroceryListPage />,
       },
     ],
   },
