@@ -15,11 +15,12 @@ const updateRecipe = (recipe) => ({ type: UPDATE_RECIPE, recipe });
 const deleteRecipe = (recipeId) => ({ type: DELETE_RECIPE, recipeId });
 
 // Thunks
-export const fetchRecipes = () => async (dispatch) => {
-  const res = await csrfFetch("/api/recipes");
+export const fetchRecipes = (page = 1, perPage = 20) => async (dispatch) => {
+  const res = await csrfFetch(`/api/recipes?page=${page}&per_page=${perPage}`);
   if (res.ok) {
     const data = await res.json();
-    dispatch(loadRecipes(data));
+    // Pass only the array to the reducer
+    dispatch(loadRecipes(data.recipes));
   }
 };
 
@@ -34,6 +35,7 @@ export const fetchRecipe = (id) => async (dispatch) => {
 export const createNewRecipe = (recipeData) => async (dispatch) => {
   const res = await csrfFetch("/api/recipes", {
     method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(recipeData),
   });
   if (res.ok) {
@@ -46,6 +48,7 @@ export const createNewRecipe = (recipeData) => async (dispatch) => {
 export const updateExistingRecipe = (id, recipeData) => async (dispatch) => {
   const res = await csrfFetch(`/api/recipes/${id}`, {
     method: "PUT",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(recipeData),
   });
   if (res.ok) {
@@ -66,8 +69,13 @@ export const deleteExistingRecipe = (id) => async (dispatch) => {
 const recipesReducer = (state = {}, action) => {
   switch (action.type) {
     case LOAD_RECIPES: {
+      // Accept either an array or an object with { recipes: [] }
+      const list = Array.isArray(action.recipes)
+        ? action.recipes
+        : action.recipes?.recipes || [];
+
       const newState = {};
-      action.recipes.forEach((recipe) => {
+      list.forEach((recipe) => {
         newState[recipe.id] = recipe;
       });
       return newState;

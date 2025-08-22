@@ -1,4 +1,6 @@
+import RecipesList from "./RecipesList";
 import RecipeDetail from "./RecipeDetail";
 import RecipeForm from "./RecipeForm";
 
-export default RecipeDetail, RecipeForm;
+
+export { RecipesList, RecipeDetail, RecipeForm };
