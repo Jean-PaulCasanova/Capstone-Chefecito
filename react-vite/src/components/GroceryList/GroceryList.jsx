@@ -1,7 +1,7 @@
 // src/components/GroceryList/GroceryList.jsx
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchGroceries, deleteGrocery } from "../../store/groceryList";
+import { fetchGroceryList, deleteGroceryList } from "../../redux/groceryList";
 
 function GroceryList() {
   const items = useSelector((state) => state.groceryList);
@@ -9,11 +9,11 @@ function GroceryList() {
 
   // Fetch groceries when component mounts
   useEffect(() => {
-    dispatch(fetchGroceries());
+    dispatch(fetchGroceryList());
   }, [dispatch]);
 
   const handleDelete = (id) => {
-    dispatch(deleteGrocery(id));
+    dispatch(deleteGroceryList(id));
   };
 
   return (

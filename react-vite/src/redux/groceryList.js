@@ -4,13 +4,17 @@ import { csrfFetch } from "./csrf";
 const LOAD_ITEMS = "groceryList/loadItems";
 const ADD_ITEM = "groceryList/addItem";
 const REMOVE_ITEM = "groceryList/removeItem";
+const DELETE_LIST = "groceryList/deleteList";
 
 // Action Creators
 const loadItems = (items) => ({ type: LOAD_ITEMS, items });
 const addItem = (item) => ({ type: ADD_ITEM, item });
 const removeItem = (itemId) => ({ type: REMOVE_ITEM, itemId });
+const deleteList = (listId) => ({ type: DELETE_LIST, listId });
 
 // Thunks
+
+// Load all grocery list items
 export const fetchGroceryList = () => async (dispatch) => {
   const res = await csrfFetch("/api/grocerylist");
   if (res.ok) {
@@ -19,6 +23,7 @@ export const fetchGroceryList = () => async (dispatch) => {
   }
 };
 
+// Add a grocery list item
 export const addGroceryItem = (itemData) => async (dispatch) => {
   const res = await csrfFetch("/api/grocerylist", {
     method: "POST",
@@ -31,10 +36,26 @@ export const addGroceryItem = (itemData) => async (dispatch) => {
   }
 };
 
+// Remove a single grocery list item
 export const removeGroceryItem = (id) => async (dispatch) => {
   const res = await csrfFetch(`/api/grocerylist/${id}`, { method: "DELETE" });
   if (res.ok) {
     dispatch(removeItem(id));
+  }
+};
+
+// 🔥 Delete a full grocery list
+export const deleteGroceryList = (listId) => async (dispatch) => {
+  const res = await csrfFetch(`/api/grocerylist/${listId}`, {
+    method: "DELETE",
+  });
+
+  if (res.ok) {
+    dispatch(deleteList(listId));
+    return true;
+  } else {
+    const error = await res.json();
+    return error;
   }
 };
 
@@ -53,6 +74,11 @@ const groceryListReducer = (state = {}, action) => {
     case REMOVE_ITEM: {
       const newState = { ...state };
       delete newState[action.itemId];
+      return newState;
+    }
+    case DELETE_LIST: {
+      const newState = { ...state };
+      delete newState[action.listId];
       return newState;
     }
     default:

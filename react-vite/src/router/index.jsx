@@ -4,8 +4,8 @@ import SignupFormPage from '../components/SignupFormPage';
 import Layout from './Layout';
 
 // new components
-import RecipeDetail from '../components/RecipeDetail';
-import GroceryListPage from '../components/GroceryListPage';
+import RecipeDetail from '../components/Recipes/RecipeDetail';
+import GroceryList from '../components/GroceryList/GroceryList';
 
 export const router = createBrowserRouter([
   {
@@ -29,7 +29,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "grocery-list",  
-        element: <GroceryListPage />,
+        element: <GroceryList />,
       },
     ],
   },

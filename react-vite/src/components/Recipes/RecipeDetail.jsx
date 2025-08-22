@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
-import { fetchRecipe, deleteRecipe } from "../../redux/recipes"; // adjust path if needed
+import { fetchRecipe, deleteExistingRecipe } from "../../redux/recipes"; // adjust path if needed
 
 function RecipeDetail() {
   const { recipeId } = useParams();
@@ -19,7 +19,7 @@ function RecipeDetail() {
   if (!recipe) return <p>Loading recipe...</p>;
 
   const handleDelete = async () => {
-    await dispatch(deleteRecipe(recipeId));
+    await dispatch(deleteExistingRecipe(recipeId));
     navigate("/"); // go back home after delete
   };
 
