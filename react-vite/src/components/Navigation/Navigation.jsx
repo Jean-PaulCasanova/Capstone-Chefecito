@@ -4,9 +4,23 @@ import "./Navigation.css";
 
 function Navigation() {
   return (
-    <ul>
+    <ul className="nav-list">
       <li>
-        <NavLink to="/">Home</NavLink>
+        <NavLink to="/" exact="true" activeclassname="active">
+          Home
+        </NavLink>
+      </li>
+
+      <li>
+        <NavLink to="/recipes" activeclassname="active">
+          Recipes
+        </NavLink>
+      </li>
+
+      <li>
+        <NavLink to="/grocery-list" activeclassname="active">
+          Grocery List
+        </NavLink>
       </li>
 
       <li>
