@@ -1,35 +1,50 @@
-import Cookies from 'js-cookie';
+// src/redux/csrf.js
+import Cookies from "js-cookie";
 
 export async function csrfFetch(url, options = {}) {
-  // set options.method to 'GET' if there is no method
-  options.method = options.method || 'GET';
-  // set options.headers to an empty object if there is no headers
-  options.headers = options.headers || {};
+  const opts = { method: "GET", ...options };
+  opts.headers = opts.headers || {};
 
-  // if the options.method is not 'GET', then set the "Content-Type" header to
-  // "application/json", and set the "XSRF-TOKEN" header to the value of the
-  // "XSRF-TOKEN" cookie
-  if (options.method.toUpperCase() !== 'GET') {
-    options.headers['Content-Type'] =
-      options.headers['Content-Type'] || 'application/json';
-    options.headers['XSRF-Token'] = Cookies.get('XSRF-TOKEN');
+  // Always send cookies (session + csrf) across origins/proxy
+  opts.credentials = "include";
+
+  // For non-GET, set JSON and XSRF header
+  if (opts.method.toUpperCase() !== "GET") {
+    opts.headers["Content-Type"] =
+      opts.headers["Content-Type"] || "application/json";
+
+    // If you're setting a CSRF cookie named XSRF-TOKEN (typical a/A setup)
+    const token = Cookies.get("XSRF-TOKEN");
+    if (token) opts.headers["XSRF-Token"] = token;
+
+    // If your backend expects 'csrf_token' (underscore) instead,
+    // uncomment the next two lines and ensure the cookie name matches server:
+    // const token2 = Cookies.get("csrf_token");
+    // if (token2) opts.headers["X-CSRFToken"] = token2;
   }
-  // call the default window's fetch with the url and the options passed in
-  const res = await window.fetch(url, options);
 
-  // if the response status code is 400 or above, then throw an error with the
-  // error being the response
-  //if (res.status >= 400) console.log res;
+  const res = await fetch(url, opts);
 
-  // if the response status code is under 400, then return the response to the
-  // next promise chain
+  // Optional: make failures obvious to callers (thunks can catch)
+  if (!res.ok) {
+    let errBody = {};
+    try {
+      errBody = await res.clone().json();
+    } catch (_) {
+      // ignore parse errors
+    }
+    const error = new Error(errBody?.error || `Request failed: ${res.status}`);
+    error.status = res.status;
+    error.body = errBody;
+    throw error;
+  }
+
   return res;
 }
 
-
-    // call this to get the "XSRF-TOKEN" cookie, should only be used in development
+// Dev helper to seed the CSRF cookie
 export function restoreCSRF() {
-    if (process.env.NODE_ENV !== 'production') {
-    return csrfFetch('/api/csrf/restore');
+  if (import.meta.env.MODE !== "production") {
+    return csrfFetch("/api/csrf/restore");
   }
 }

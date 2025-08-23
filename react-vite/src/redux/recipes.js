@@ -16,7 +16,7 @@ const deleteRecipe = (recipeId) => ({ type: DELETE_RECIPE, recipeId });
 
 // Thunks
 export const fetchRecipes = (page = 1, perPage = 20) => async (dispatch) => {
-  const res = await csrfFetch(`/api/recipes?page=${page}&per_page=${perPage}`);
+  const res = await csrfFetch(`/api/recipes/?page=${page}&per_page=${perPage}`);
   if (res.ok) {
     const data = await res.json();
     // Pass only the array to the reducer
@@ -33,7 +33,7 @@ export const fetchRecipe = (id) => async (dispatch) => {
 };
 
 export const createNewRecipe = (recipeData) => async (dispatch) => {
-  const res = await csrfFetch("/api/recipes", {
+  const res = await csrfFetch("/api/recipes/", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(recipeData),
