@@ -8,11 +8,15 @@ import thunk from "redux-thunk";
 import sessionReducer from "./session";
 import recipesReducer from './recipes';
 import groceryListReducer from "./groceryList";
+import socialsReducer from "./socials";
+import commentsReducer from "./comments";
 
 const rootReducer = combineReducers({
   session: sessionReducer,
   recipes: recipesReducer,
   groceryList: groceryListReducer,
+  socials: socialsReducer,
+  comments: commentsReducer
 });
 
 let enhancer;
