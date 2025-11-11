@@ -1,4 +1,3 @@
-// src/components/Recipes/RecipeDetail.jsx
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, useNavigate, Link } from "react-router-dom";
@@ -6,12 +5,17 @@ import { fetchRecipe, deleteExistingRecipe } from "../../redux/recipes";
 import { addGroceryItem } from "../../redux/groceryList";
 import "./Recipe.css";
 
+// NEW: socials UI
+import SocialBar from "./SocialBar";
+import CommentsPanel from "./CommentsPanel";
+
 export default function RecipeDetail() {
   const { recipeId } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const recipe = useSelector((state) => state.recipes[recipeId]);
+  const sessionUser = useSelector((state) => state.session.user); // NEW
 
   // UI feedback state
   const [addingIdx, setAddingIdx] = useState(null);
@@ -32,7 +36,6 @@ export default function RecipeDetail() {
     try {
       await dispatch(addGroceryItem({ item_name: ingredient }));
       setJustAddedIdx(idx);
-      // reset the “Added!” indicator after a moment
       setTimeout(() => setJustAddedIdx(null), 900);
     } catch (e) {
       setErrorMsg("Could not add to grocery list. Please try again.");
@@ -49,6 +52,9 @@ export default function RecipeDetail() {
   return (
     <div className="recipe-detail">
       <h1>{recipe.title}</h1>
+
+      {/* NEW: Social actions just under the title */}
+      <SocialBar recipeId={Number(recipeId)} isLoggedIn={!!sessionUser} />
 
       {recipe.image_url ? (
         <div className="recipe-card__image" style={{ maxWidth: 680 }}>
@@ -101,6 +107,9 @@ export default function RecipeDetail() {
           Delete
         </button>
       </div>
+
+      {/* NEW: Comments near the bottom */}
+      <CommentsPanel recipeId={Number(recipeId)} sessionUser={sessionUser} />
     </div>
   );
 }
