@@ -136,3 +136,4 @@ export default function RecipeDetail() {
       <CommentsPanel recipeId={Number(recipeId)} sessionUser={sessionUser} />
     </main>
   );
+}
