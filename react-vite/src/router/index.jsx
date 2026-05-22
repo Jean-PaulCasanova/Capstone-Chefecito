@@ -6,6 +6,8 @@ import Layout from "./Layout";
 import LoginFormPage from "../components/LoginFormPage";
 import SignupFormPage from "../components/SignupFormPage";
 
+import HomePage from "../components/HomePage";
+
 // Recipes
 import RecipesList from "../components/Recipes/RecipesList";
 import RecipeDetail from "../components/Recipes/RecipeDetail";
@@ -22,7 +24,7 @@ export const router = createBrowserRouter([
     element: <Layout />,
     errorElement: <NotFound />,
     children: [
-      { index: true, element: <RecipesList /> },
+      { index: true, element: <HomePage /> },
       { path: "login", element: <LoginFormPage /> },
       { path: "signup", element: <SignupFormPage /> },
 

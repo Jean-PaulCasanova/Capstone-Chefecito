@@ -26,7 +26,7 @@ export default function RecipesList() {
       <div style={{ padding: 16 }}>
         <h2>No recipes yet</h2>
         <p>Why not create your first one?</p>
-        <Link to="/recipes/new" className="btn">
+        <Link to="/recipes/new" className="new-recipe-btn">
           + New Recipe
         </Link>
       </div>
@@ -37,7 +37,7 @@ export default function RecipesList() {
     <div className="recipes-list">
       <div className="recipes-list__header">
         <h1>Recipes</h1>
-        <Link to="/recipes/new" className="btn">
+        <Link to="/recipes/new" className="new-recipe-btn">
           + New Recipe
         </Link>
       </div>

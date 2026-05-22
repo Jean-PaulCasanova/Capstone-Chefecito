@@ -3,30 +3,39 @@ import ProfileButton from "./ProfileButton";
 import "./Navigation.css";
 
 function Navigation() {
+  const getNavClass = ({ isActive }) =>
+    isActive ? "nav-link active" : "nav-link";
+
   return (
-    <ul className="nav-list">
-      <li>
-        <NavLink to="/" exact="true" activeclassname="active">
-          Home
-        </NavLink>
-      </li>
+    <nav className="navbar">
+      <NavLink to="/" className="nav-logo">
+        Chefecito
+      </NavLink>
 
-      <li>
-        <NavLink to="/recipes" activeclassname="active">
-          Recipes
-        </NavLink>
-      </li>
+      <ul className="nav-list">
+        <li>
+          <NavLink to="/" className={getNavClass}>
+            Home
+          </NavLink>
+        </li>
 
-      <li>
-        <NavLink to="/grocery-list" activeclassname="active">
-          Grocery List
-        </NavLink>
-      </li>
+        <li>
+          <NavLink to="/recipes" className={getNavClass}>
+            Recipes
+          </NavLink>
+        </li>
 
-      <li>
-        <ProfileButton />
-      </li>
-    </ul>
+        <li>
+          <NavLink to="/grocery-list" className={getNavClass}>
+            Grocery List
+          </NavLink>
+        </li>
+
+        <li className="nav-profile">
+          <ProfileButton />
+        </li>
+      </ul>
+    </nav>
   );
 }
 

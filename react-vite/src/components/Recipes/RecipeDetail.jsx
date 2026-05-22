@@ -1,4 +1,3 @@
-// src/components/Recipes/RecipeDetail.jsx
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, useNavigate, Link } from "react-router-dom";
@@ -6,12 +5,17 @@ import { fetchRecipe, deleteExistingRecipe } from "../../redux/recipes";
 import { addGroceryItem } from "../../redux/groceryList";
 import "./Recipe.css";
 
+// NEW: socials UI
+import SocialBar from "./SocialBar";
+import CommentsPanel from "./CommentsPanel";
+
 export default function RecipeDetail() {
   const { recipeId } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const recipe = useSelector((state) => state.recipes[recipeId]);
+  const sessionUser = useSelector((state) => state.session.user); // NEW
 
   // UI feedback state
   const [addingIdx, setAddingIdx] = useState(null);
@@ -32,7 +36,6 @@ export default function RecipeDetail() {
     try {
       await dispatch(addGroceryItem({ item_name: ingredient }));
       setJustAddedIdx(idx);
-      // reset the “Added!” indicator after a moment
       setTimeout(() => setJustAddedIdx(null), 900);
     } catch (e) {
       setErrorMsg("Could not add to grocery list. Please try again.");
@@ -47,60 +50,90 @@ export default function RecipeDetail() {
   };
 
   return (
-    <div className="recipe-detail">
-      <h1>{recipe.title}</h1>
-
-      {recipe.image_url ? (
-        <div className="recipe-card__image" style={{ maxWidth: 680 }}>
-          <img src={recipe.image_url} alt={recipe.title} />
+    <main className="recipe-detail">
+      <header className="recipe-detail__header">
+        <div>
+          <h1 className="recipe-detail__title">{recipe.title}</h1>
+          <SocialBar recipeId={Number(recipeId)} isLoggedIn={!!sessionUser} />
         </div>
-      ) : null}
-
+      </header>
+  
+      {recipe.image_url && (
+        <img
+          className="recipe-detail__image"
+          src={recipe.image_url}
+          alt={recipe.title}
+        />
+      )}
+  
       {recipe.description && (
-        <>
-          <h3>Description</h3>
-          <p>{recipe.description}</p>
-        </>
+        <section className="recipe-detail__section">
+          <h2 className="recipe-section-title">Description</h2>
+          <p className="recipe-text">{recipe.description}</p>
+        </section>
       )}
-
-      <div style={{ display: "flex", alignItems: "baseline", gap: 12 }}>
-        <h3>Ingredients</h3>
-        <Link to="/grocery-list" className="btn">View Grocery List →</Link>
+  
+      <div className="recipe-detail__content">
+        <section className="recipe-detail__section">
+          <div className="recipe-detail__section-header">
+            <h2 className="recipe-section-title">Ingredients</h2>
+            <Link to="/grocery-list" className="recipe-detail__link">
+              View Grocery List →
+            </Link>
+          </div>
+  
+          {errorMsg && <p className="recipe-error">{errorMsg}</p>}
+  
+          {ingredients.length ? (
+            <ul className="ingredients-list">
+              {ingredients.map((ing, i) => (
+                <li key={`${i}-${ing}`}>
+                  <button
+                    type="button"
+                    className="ingredient-btn"
+                    onClick={() => handleAddIngredient(ing, i)}
+                    disabled={addingIdx === i}
+                    title="Add to Grocery List"
+                  >
+                    {addingIdx === i
+                      ? "Adding…"
+                      : justAddedIdx === i
+                      ? "Added!"
+                      : "➕ " + ing}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="recipe-text">No ingredients provided.</p>
+          )}
+        </section>
+  
+        <section className="recipe-detail__section">
+          <h2 className="recipe-section-title">Instructions</h2>
+          <p className="recipe-text recipe-instructions">{recipe.instructions}</p>
+        </section>
       </div>
-
-      {errorMsg && <p style={{ color: "crimson" }}>{errorMsg}</p>}
-
-      {ingredients.length ? (
-        <ul className="ingredients-list">
-          {ingredients.map((ing, i) => (
-            <li key={`${i}-${ing}`}>
-              <button
-                type="button"
-                className="ingredient-btn"
-                onClick={() => handleAddIngredient(ing, i)}
-                disabled={addingIdx === i}
-                title="Add to Grocery List"
-              >
-                {addingIdx === i ? "Adding…" : justAddedIdx === i ? "Added!" : "➕ " + ing}
-              </button>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>No ingredients provided.</p>
-      )}
-
-      <h3>Instructions</h3>
-      <p style={{ whiteSpace: "pre-wrap" }}>{recipe.instructions}</p>
-
-      <div style={{ marginTop: 16, display: "flex", gap: 8 }}>
-        <button type="button" onClick={() => navigate(`/recipes/${recipeId}/edit`)}>
+  
+      <div className="recipe-detail__actions">
+        <button
+          type="button"
+          className="recipe-action-btn"
+          onClick={() => navigate(`/recipes/${recipeId}/edit`)}
+        >
           Edit
         </button>
-        <button type="button" onClick={handleDelete}>
+  
+        <button
+          type="button"
+          className="recipe-action-btn recipe-action-btn--danger"
+          onClick={handleDelete}
+        >
           Delete
         </button>
       </div>
-    </div>
+  
+      <CommentsPanel recipeId={Number(recipeId)} sessionUser={sessionUser} />
+    </main>
   );
 }
